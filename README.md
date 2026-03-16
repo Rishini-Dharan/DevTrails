@@ -366,7 +366,7 @@ AI/ML is embedded across **four critical pillars** of the GigShield platform:
 
 ```
 ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│  Data Layer  │────▶│  Feature     │────▶│  Model       │
+│  Data Layer  │───▶│  Feature      │───▶│  Model       │
 │              │     │  Store       │     │  Training    │
 │ - Weather API│     │              │     │  (Weekly)    │
 │ - AQI API    │     │ - Zone stats │     │              │
@@ -502,15 +502,15 @@ AI/ML is embedded across **four critical pillars** of the GigShield platform:
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                        CLIENT (PWA - React/Next.js)                 │
-│  ┌───────────┐  ┌───────────┐  ┌───────────┐  ┌───────────┐        │
-│  │ Onboarding│  │  Policy   │  │ Dashboard │  │  Admin    │        │
-│  │   Flow    │  │ Purchase  │  │ (Worker)  │  │ Analytics │        │
-│  └───────────┘  └───────────┘  └───────────┘  └───────────┘        │
+│  ┌───────────┐  ┌───────────┐  ┌───────────┐  ┌───────────┐         │
+│  │ Onboarding│  │  Policy   │  │ Dashboard │  │  Admin    │         │
+│  │   Flow    │  │ Purchase  │  │ (Worker)  │  │ Analytics │         │
+│  └───────────┘  └───────────┘  └───────────┘  └───────────┘         │
 └───────────────────────────┬─────────────────────────────────────────┘
                             │ HTTPS / REST
                             ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│                     API GATEWAY (Nginx)                              │
+│                     API GATEWAY (Nginx)                             │
 └───────────────────────────┬─────────────────────────────────────────┘
                             │
               ┌─────────────┼─────────────┐
@@ -534,11 +534,11 @@ AI/ML is embedded across **four critical pillars** of the GigShield platform:
                   │
                   │
 ┌─────────────────┴───────────────────────────────────────────────────┐
-│                    EVENT LAYER (Apache Kafka)                        │
+│                    EVENT LAYER (Apache Kafka)                       │
 │                                                                     │
-│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐           │
-│  │ Weather Events│  │  AQI Events   │  │  News Events  │           │
-│  └───────┬───────┘  └───────┬───────┘  └───────┬───────┘           │
+│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐            │
+│  │ Weather Events│  │  AQI Events   │  │  News Events  │            │
+│  └───────┬───────┘  └───────┬───────┘  └───────┬───────┘            │
 │          └──────────────────┼──────────────────┘                    │
 │                             ▼                                       │
 │                  ┌─────────────────────┐                            │
