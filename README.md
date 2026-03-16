@@ -132,7 +132,7 @@ GigShield is a **micro-insurance product** that:
 
 1. ONBOARDING (< 3 mins)
    ┌──────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
-   │ Phone +  │───▶│ Verify Gig   │───▶│ Select Work  │───▶│ AI Risk      │
+   │ Phone +  │───▶│ Verify Gig  │───▶│ Select Work  │──▶│ AI Risk      │
    │ OTP Login│    │ Platform ID  │    │ Zone (City/  │    │ Profiling    │
    │          │    │ (Zomato/     │    │ Pincode)     │    │ (Instant)    │
    └──────────┘    │ Swiggy)      │    └──────────────┘    └──────────────┘
@@ -140,7 +140,7 @@ GigShield is a **micro-insurance product** that:
 
 2. POLICY PURCHASE
    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
-   │ View Weekly  │───▶│ Choose Plan  │───▶│ Pay via UPI  │
+   │ View Weekly  │──▶│ Choose Plan  │───▶│ Pay via UPI  │
    │ Premium      │    │ (Basic /     │    │ / Wallet     │
    │ (AI-priced)  │    │ Standard /   │    │              │
    │              │    │ Premium)     │    │              │
@@ -148,7 +148,7 @@ GigShield is a **micro-insurance product** that:
 
 3. ACTIVE COVERAGE (Automated — No User Action Required)
    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
-   │ Real-Time    │───▶│ Parametric   │───▶│ AI Fraud     │
+   │ Real-Time    │───▶│ Parametric   │───▶│ AI Fraud    │
    │ Monitoring   │    │ Trigger      │    │ Check        │
    │ (Weather,    │    │ Detected!    │    │ (< 30 sec)   │
    │ AQI, News)   │    │              │    │              │
@@ -261,32 +261,32 @@ Real-Time Data Ingestion (every 15 min)
           │
           ▼
 ┌─────────────────────┐
-│  Data Normalisation  │──── Weather, AQI, News, Platform feeds
-│  & Validation        │
+│  Data Normalisation │──── Weather, AQI, News, Platform feeds
+│  & Validation       │
 └─────────┬───────────┘
           │
           ▼
 ┌─────────────────────┐
-│  Threshold Engine    │──── Compare against trigger rules per zone
-│                      │
+│  Threshold Engine   │──── Compare against trigger rules per zone
+│                     │
 └─────────┬───────────┘
           │  Threshold breached?
           ▼
 ┌─────────────────────┐
-│  Geo-Fence Match     │──── Is the worker's zone affected?
-│                      │
+│  Geo-Fence Match    │──── Is the worker's zone affected?
+│                     │
 └─────────┬───────────┘
           │
           ▼
 ┌─────────────────────┐
-│  Fraud Detection AI  │──── Anomaly scoring, duplicate check
-│                      │
+│  Fraud Detection AI │──── Anomaly scoring, duplicate check
+│                     │
 └─────────┬───────────┘
           │  Score < Fraud Threshold?
           ▼
 ┌─────────────────────┐
-│  Payout Calculation  │──── Apply formula based on plan & disruption
-│  & Disbursement      │
+│  Payout Calculation │──── Apply formula based on plan & disruption
+│  & Disbursement     │
 └─────────────────────┘
 ```
 
