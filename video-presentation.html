@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GigShield — Strategy Presentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-dark: #0a0a1a;
+    --bg-card: rgba(255,255,255,0.04);
+    --accent-1: #6366f1;
+    --accent-2: #8b5cf6;
+    --accent-3: #a78bfa;
+    --accent-glow: rgba(99,102,241,0.3);
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --green: #22c55e;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --blue: #3b82f6;
+    --cyan: #06b6d4;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  /* ─── Progress Bar ─── */
+  #progress-bar {
+    position: fixed; top: 0; left: 0; height: 4px; z-index: 100;
+    background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--cyan));
+    transition: width 0.3s linear;
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+
+  /* ─── Slide Container ─── */
+  .slides-wrapper {
+    width: 100vw; height: 100vh; position: relative;
+  }
+
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    padding: 60px 80px;
+    opacity: 0;
+    transform: translateY(30px) scale(0.97);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    pointer-events: none;
+  }
+  .slide.active {
+    opacity: 1; transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+  .slide.exit {
+    opacity: 0; transform: translateY(-30px) scale(0.97);
+  }
+
+  /* ─── Background Gradient Blobs ─── */
+  .blob {
+    position: fixed; border-radius: 50%; filter: blur(120px);
+    pointer-events: none; z-index: -1;
+  }
+  .blob-1 { width: 600px; height: 600px; background: rgba(99,102,241,0.12); top: -200px; right: -100px; }
+  .blob-2 { width: 500px; height: 500px; background: rgba(139,92,246,0.08); bottom: -150px; left: -100px; }
+  .blob-3 { width: 400px; height: 400px; background: rgba(6,182,212,0.06); top: 50%; left: 50%; transform: translate(-50%,-50%); }
+
+  /* ─── Slide Number ─── */
+  .slide-counter {
+    position: fixed; bottom: 30px; right: 40px;
+    font-size: 14px; color: var(--text-muted);
+    font-weight: 500; z-index: 50;
+    letter-spacing: 2px;
+  }
+
+  /* ─── Typography ─── */
+  .slide-tag {
+    font-size: 12px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--accent-3); margin-bottom: 16px;
+    opacity: 0; transform: translateY(10px);
+    animation: fadeUp 0.5s ease forwards;
+    animation-delay: 0.2s;
+  }
+  .slide-title {
+    font-size: 52px; font-weight: 800; line-height: 1.15;
+    text-align: center; max-width: 900px;
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-3) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp 0.6s ease forwards;
+    animation-delay: 0.4s;
+  }
+  .slide-subtitle {
+    font-size: 20px; font-weight: 400; color: var(--text-secondary);
+    text-align: center; max-width: 700px; margin-top: 20px; line-height: 1.6;
+    opacity: 0; transform: translateY(15px);
+    animation: fadeUp 0.5s ease forwards;
+    animation-delay: 0.7s;
+  }
+
+  /* ─── Stats Row ─── */
+  .stats-row {
+    display: flex; gap: 40px; margin-top: 40px; flex-wrap: wrap; justify-content: center;
+    opacity: 0; animation: fadeUp 0.6s ease forwards; animation-delay: 0.9s;
+  }
+  .stat-card {
+    background: var(--bg-card); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px; padding: 28px 36px; text-align: center;
+    min-width: 160px;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(99,102,241,0.15); }
+  .stat-number {
+    font-size: 36px; font-weight: 800;
+    background: linear-gradient(135deg, var(--accent-1), var(--cyan));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .stat-label { font-size: 13px; color: var(--text-muted); margin-top: 6px; font-weight: 500; letter-spacing: 0.5px; }
+
+  /* ─── Feature Grid ─── */
+  .feature-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    margin-top: 36px; width: 100%; max-width: 950px;
+    opacity: 0; animation: fadeUp 0.6s ease forwards; animation-delay: 0.8s;
+  }
+  .feature-card {
+    background: var(--bg-card); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px; padding: 24px 20px;
+    backdrop-filter: blur(10px);
+  }
+  .feature-card .icon { font-size: 28px; margin-bottom: 10px; }
+  .feature-card h3 { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; }
+  .feature-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+  /* ─── Two Column Layout ─── */
+  .two-col {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
+    margin-top: 36px; width: 100%; max-width: 950px;
+    opacity: 0; animation: fadeUp 0.6s ease forwards; animation-delay: 0.8s;
+  }
+  .col-card {
+    background: var(--bg-card); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px; padding: 28px 24px;
+    backdrop-filter: blur(10px);
+  }
+  .col-card h3 {
+    font-size: 16px; font-weight: 700; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  /* ─── Pipeline Steps ─── */
+  .pipeline {
+    display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 900px;
+    margin-top: 32px;
+    opacity: 0; animation: fadeUp 0.6s ease forwards; animation-delay: 0.8s;
+  }
+  .pipe-step {
+    display: flex; align-items: center; gap: 16px;
+    background: var(--bg-card); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px; padding: 16px 20px;
+    backdrop-filter: blur(10px);
+    opacity: 0; animation: fadeUp 0.4s ease forwards;
+  }
+  .pipe-step:nth-child(1) { animation-delay: 0.9s; }
+  .pipe-step:nth-child(2) { animation-delay: 1.1s; }
+  .pipe-step:nth-child(3) { animation-delay: 1.3s; }
+  .pipe-step:nth-child(4) { animation-delay: 1.5s; }
+  .pipe-step:nth-child(5) { animation-delay: 1.7s; }
+  .pipe-step:nth-child(6) { animation-delay: 1.9s; }
+  .pipe-step:nth-child(7) { animation-delay: 2.1s; }
+  .pipe-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; flex-shrink: 0;
+  }
+  .pipe-text { font-size: 14px; color: var(--text-secondary); line-height: 1.4; }
+  .pipe-text strong { color: var(--text-primary); }
+
+  /* ─── Signal Grid (Anti-Spoofing) ─── */
+  .signal-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+    margin-top: 30px; width: 100%; max-width: 950px;
+    opacity: 0; animation: fadeUp 0.6s ease forwards; animation-delay: 0.8s;
+  }
+  .signal-card {
+    background: var(--bg-card); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px; padding: 18px 14px; text-align: center;
+    backdrop-filter: blur(10px);
+  }
+  .signal-card .sig-icon { font-size: 24px; margin-bottom: 8px; }
+  .signal-card h4 { font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+  .signal-card p { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+  .signal-card .difficulty {
+    display: inline-block; margin-top: 8px; padding: 3px 10px;
+    border-radius: 20px; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .diff-vhard { background: rgba(34,197,94,0.15); color: var(--green); }
+  .diff-hard { background: rgba(245,158,11,0.15); color: var(--amber); }
+  .diff-impossible { background: rgba(99,102,241,0.15); color: var(--accent-3); }
+
+  /* ─── Tiers ─── */
+  .tiers {
+    display: flex; gap: 24px; margin-top: 32px; width: 100%; max-width: 850px; justify-content: center;
+    opacity: 0; animation: fadeUp 0.6s ease forwards; animation-delay: 0.9s;
+  }
+  .tier-card {
+    flex: 1; border-radius: 14px; padding: 24px 20px; text-align: center;
+    backdrop-filter: blur(10px);
+  }
+  .tier-green { background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); }
+  .tier-amber { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); }
+  .tier-red { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); }
+  .tier-card .tier-icon { font-size: 32px; margin-bottom: 8px; }
+  .tier-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .tier-card .tier-score { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; }
+  .tier-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+  /* ─── Tech Pills ─── */
+  .tech-pills {
+    display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; justify-content: center; max-width: 800px;
+    opacity: 0; animation: fadeUp 0.5s ease forwards; animation-delay: 0.9s;
+  }
+  .tech-pill {
+    padding: 10px 20px; border-radius: 30px; font-size: 13px; font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.08); background: var(--bg-card);
+    backdrop-filter: blur(10px);
+  }
+
+  /* ─── Timeline ─── */
+  .timeline {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px;
+    margin-top: 36px; width: 100%; max-width: 960px;
+    opacity: 0; animation: fadeUp 0.6s ease forwards; animation-delay: 0.8s;
+  }
+  .tl-item {
+    background: var(--bg-card); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px; padding: 18px 14px; text-align: center;
+    backdrop-filter: blur(10px); position: relative;
+  }
+  .tl-item::after {
+    content: '→'; position: absolute; right: -14px; top: 50%; transform: translateY(-50%);
+    color: var(--text-muted); font-size: 16px;
+  }
+  .tl-item:last-child::after { display: none; }
+  .tl-week { font-size: 11px; font-weight: 700; color: var(--accent-3); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+  .tl-label { font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
+
+  /* ─── CTA Slide ─── */
+  .cta-logo { font-size: 72px; margin-bottom: 16px; opacity: 0; animation: fadeUp 0.6s ease forwards; animation-delay: 0.3s; }
+  .cta-tagline {
+    font-size: 18px; color: var(--text-secondary); margin-top: 16px;
+    opacity: 0; animation: fadeUp 0.5s ease forwards; animation-delay: 0.8s;
+  }
+
+  /* ─── Small Title Variant ─── */
+  .slide-title-sm {
+    font-size: 38px; font-weight: 800; line-height: 1.2;
+    text-align: center; max-width: 850px;
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-3) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp 0.6s ease forwards; animation-delay: 0.4s;
+  }
+
+  /* ─── Lists in col-card ─── */
+  .col-card ul { list-style: none; padding: 0; }
+  .col-card ul li {
+    font-size: 13px; color: var(--text-secondary); padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04); line-height: 1.5;
+  }
+  .col-card ul li:last-child { border-bottom: none; }
+
+  /* ─── Animations ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── Start Button Overlay ─── */
+  #start-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: var(--bg-dark);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    transition: opacity 0.6s ease;
+  }
+  #start-overlay.hidden { opacity: 0; pointer-events: none; }
+  #start-btn {
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    border: none; color: white; font-family: 'Inter', sans-serif;
+    font-size: 18px; font-weight: 700; padding: 18px 48px;
+    border-radius: 50px; cursor: pointer;
+    box-shadow: 0 4px 30px var(--accent-glow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    letter-spacing: 1px;
+  }
+  #start-btn:hover { transform: scale(1.05); box-shadow: 0 8px 40px var(--accent-glow); }
+  .start-hint { color: var(--text-muted); font-size: 13px; margin-top: 16px; }
+  .start-title {
+    font-size: 28px; font-weight: 800; margin-bottom: 32px;
+    background: linear-gradient(135deg, var(--text-primary), var(--accent-3));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ─── Pause indicator ─── */
+  #pause-indicator {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(10px);
+    border-radius: 16px; padding: 20px 36px;
+    font-size: 16px; font-weight: 600; color: var(--text-primary);
+    opacity: 0; pointer-events: none; z-index: 150;
+    transition: opacity 0.3s ease;
+  }
+  #pause-indicator.visible { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- Start Overlay -->
+<div id="start-overlay">
+  <div class="start-title">🛡️ GigShield — Strategy Presentation</div>
+  <button id="start-btn" onclick="startPresentation()">▶ START PRESENTATION</button>
+  <div class="start-hint">Auto-plays for 2 minutes • Press Space to pause/resume</div>
+</div>
+
+<!-- Progress Bar -->
+<div id="progress-bar" style="width:0%"></div>
+
+<!-- Pause Indicator -->
+<div id="pause-indicator">⏸ Paused — Press Space to resume</div>
+
+<!-- Background Blobs -->
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<!-- Slide Counter -->
+<div class="slide-counter"><span id="current-slide">1</span> / <span id="total-slides">8</span></div>
+
+<!-- ═══════════════ SLIDES ═══════════════ -->
+<div class="slides-wrapper">
+
+  <!-- SLIDE 1: Title + Problem -->
+  <div class="slide" data-duration="14000">
+    <div class="slide-tag">DEVTrails 2026 • Phase 1</div>
+    <div class="slide-title">🛡️ GigShield</div>
+    <div class="slide-subtitle">
+      AI-Powered Parametric Micro-Insurance for India's Gig Economy.<br>
+      Protecting delivery partners' <strong style="color:var(--accent-3)">income</strong> against forces beyond their control — one week at a time.
+    </div>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-number">7.7M+</div>
+        <div class="stat-label">Gig Workers in India</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">20–30%</div>
+        <div class="stat-label">Monthly Income Lost to Disruptions</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">ZERO</div>
+        <div class="stat-label">Insurance Products Exist for Them</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: Solution -->
+  <div class="slide" data-duration="14000">
+    <div class="slide-tag">The Solution</div>
+    <div class="slide-title-sm">Weekly. Automated. Zero-Claim.<br>Income Protection That Just Works.</div>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="icon">💰</div>
+        <h3>₹29–₹99/week</h3>
+        <p>Premiums aligned with gig payout cycles. Less than one chai per day.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">⚡</div>
+        <h3>Zero-Touch Payouts</h3>
+        <p>Parametric triggers detect disruptions & pay automatically. No forms. No calls.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🤖</div>
+        <h3>AI-Powered Pricing</h3>
+        <p>XGBoost risk model calculates fair, dynamic premiums per zone per week.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🕐</div>
+        <h3>&lt; 2 Hour Payouts</h3>
+        <p>From disruption detection to UPI deposit — fully automated in 90 minutes.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📱</div>
+        <h3>PWA — No Install</h3>
+        <p>Works on any budget Android phone via browser link. Under 5MB.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🌐</div>
+        <h3>Vernacular Support</h3>
+        <p>Hindi, Kannada, Tamil, Telugu. Icons over text. Voice tooltips.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: Persona -->
+  <div class="slide" data-duration="15000">
+    <div class="slide-tag">Target Persona</div>
+    <div class="slide-title-sm">Meet Ramesh — Swiggy Delivery Partner, Mumbai</div>
+    <div class="two-col">
+      <div class="col-card">
+        <h3>👤 Who He Is</h3>
+        <ul>
+          <li>📍 Age 26, based in Andheri West, Mumbai</li>
+          <li>💼 Swiggy partner, earns ₹4,500/week</li>
+          <li>📱 Budget Android (32GB), prepaid 4G data</li>
+          <li>🏠 Supports wife + 2 kids + parents back home</li>
+          <li>🚫 Never bought any insurance product</li>
+          <li>💬 Trusts his WhatsApp rider group more than any ad</li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <h3>💭 How He Thinks</h3>
+        <ul>
+          <li><strong>Weekly budgeting</strong> — thinks in daily amounts, not monthly</li>
+          <li><strong>Distrusts "bima"</strong> — uncle's claim rejected after 45 days</li>
+          <li><strong>Loss aversion</strong> — pays to stop losing, not for "peace of mind"</li>
+          <li><strong>Peer-driven</strong> — one WhatsApp payout screenshot = 3 signups</li>
+          <li><strong>Cash-flow fragile</strong> — ₹500 gap → borrows at 5%/week interest</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide-subtitle" style="margin-top:20px; font-size:15px; max-width:800px;">
+      <em>"Last monsoon, Ramesh lost ₹2,000+ to rain days. With GigShield Standard (₹59/week), he received ₹2,050 in auto-payouts across 3 trigger events — in the same week."</em>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: AI/ML Strategy -->
+  <div class="slide" data-duration="17000">
+    <div class="slide-tag">AI/ML Architecture</div>
+    <div class="slide-title-sm">How Our AI Actually Works —<br>From Raw Data to UPI Payout</div>
+    <div class="pipeline">
+      <div class="pipe-step">
+        <div class="pipe-num">1</div>
+        <div class="pipe-text"><strong>Ingest</strong> — Kafka pulls weather/AQI data every 15 min from OpenWeatherMap & CPCB APIs</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">2</div>
+        <div class="pipe-text"><strong>Enrich</strong> — Feature store adds zone context: rolling rainfall, historical disruption frequency, active policies</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">3</div>
+        <div class="pipe-text"><strong>Trigger</strong> — Threshold engine checks: precip > 30mm/hr for 2+ hrs? → <strong style="color:var(--green)">TRIGGER FIRES</strong></div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">4</div>
+        <div class="pipe-text"><strong>Match</strong> — Geo-fence query: 342 active policies in affected zone MUM-ANW-400058</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">5</div>
+        <div class="pipe-text"><strong>Verify</strong> — Isolation Forest fraud check: GPS + cell tower + accelerometer + Wi-Fi → score 0.08 = <strong style="color:var(--green)">CLEAN</strong></div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">6</div>
+        <div class="pipe-text"><strong>Calculate</strong> — ₹1,500 × (5h/10h) × 65% coverage = <strong style="color:var(--accent-3)">₹490 payout</strong></div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">7</div>
+        <div class="pipe-text"><strong>Pay</strong> — Razorpay UPI → Ramesh's wallet in <strong style="color:var(--green)">90 minutes</strong>. WhatsApp notification sent.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: AI Models Deep Dive -->
+  <div class="slide" data-duration="15000">
+    <div class="slide-tag">AI Model Details</div>
+    <div class="slide-title-sm">Three Models. Weekly Retraining.<br>Explainable to Every Worker.</div>
+    <div class="feature-grid">
+      <div class="feature-card" style="border-left: 3px solid var(--accent-1);">
+        <div class="icon">🎯</div>
+        <h3>XGBoost — Risk Pricing</h3>
+        <p>Predicts Zone Risk Factor (0.8–2.5) from 5-year weather history, disruption frequency, seasonal patterns. SHAP values explain premium in plain language.</p>
+      </div>
+      <div class="feature-card" style="border-left: 3px solid var(--green);">
+        <div class="icon">🛡️</div>
+        <h3>Isolation Forest — Fraud</h3>
+        <p>Anomaly detection on 7 signals. Genuine rider: long path (score 0.08, auto-approve). Spoofer: short path (score 0.92, auto-reject + appeal).</p>
+      </div>
+      <div class="feature-card" style="border-left: 3px solid var(--cyan);">
+        <div class="icon">📊</div>
+        <h3>LSTM — Forecasting</h3>
+        <p>Time-series prediction of disruption probability per zone per day. Drives proactive premium adjustment and worker pre-alerts.</p>
+      </div>
+    </div>
+    <div class="two-col" style="margin-top:20px; max-width:950px;">
+      <div class="col-card">
+        <h3>🔄 Model Lifecycle</h3>
+        <ul>
+          <li>Initial training on 5-yr historical + simulated claim data</li>
+          <li>Weekly retraining every Sunday midnight</li>
+          <li>Champion/Challenger: new model serves 5% shadow traffic</li>
+          <li>Auto-promote after beating champion for 2 weeks</li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <h3>📈 Drift Monitoring</h3>
+        <ul>
+          <li>Feature drift: input distribution shift > 15% → alert</li>
+          <li>Prediction drift: fraud score distribution change → alert</li>
+          <li>Concept drift: approval rate deviates > 10% → review</li>
+          <li>All tracked via MLflow + Prometheus dashboards</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: Anti-Spoofing Strategy -->
+  <div class="slide" data-duration="17000">
+    <div class="slide-tag">🚨 Market Crash Response</div>
+    <div class="slide-title-sm">Adversarial Defense & Anti-Spoofing<br>7-Signal Verification. GPS is Just 1 of 7.</div>
+    <div class="signal-grid">
+      <div class="signal-card">
+        <div class="sig-icon">📡</div>
+        <h4>Cell Tower Triangulation</h4>
+        <p>True location from carrier network, independent of GPS</p>
+        <span class="difficulty diff-vhard">VERY HARD TO SPOOF</span>
+      </div>
+      <div class="signal-card">
+        <div class="sig-icon">📶</div>
+        <h4>Wi-Fi BSSID</h4>
+        <p>Detects home Wi-Fi during claim = fraud signal</p>
+        <span class="difficulty diff-hard">HARD TO SPOOF</span>
+      </div>
+      <div class="signal-card">
+        <div class="sig-icon">📲</div>
+        <h4>Accelerometer</h4>
+        <p>Movement patterns vs. phone flat on table at home</p>
+        <span class="difficulty diff-vhard">VERY HARD TO SPOOF</span>
+      </div>
+      <div class="signal-card">
+        <div class="sig-icon">🛵</div>
+        <h4>Platform Activity</h4>
+        <p>Last order accepted? Server-side logs can't be faked</p>
+        <span class="difficulty diff-impossible">IMPOSSIBLE TO FAKE</span>
+      </div>
+      <div class="signal-card">
+        <div class="sig-icon">🌧️</div>
+        <h4>Weather Micro-Check</h4>
+        <p>3 nearest stations must agree with claimed conditions</p>
+        <span class="difficulty diff-impossible">IMPOSSIBLE TO FAKE</span>
+      </div>
+      <div class="signal-card">
+        <div class="sig-icon">🌐</div>
+        <h4>Network Latency</h4>
+        <p>RTT to regional servers reveals physical proximity</p>
+        <span class="difficulty diff-hard">HARD TO SPOOF</span>
+      </div>
+      <div class="signal-card">
+        <div class="sig-icon">🔒</div>
+        <h4>Device Integrity</h4>
+        <p>Detects mock location apps, root, spoofing tools</p>
+        <span class="difficulty diff-hard">MODERATE</span>
+      </div>
+      <div class="signal-card" style="background: rgba(99,102,241,0.08); border-color: rgba(99,102,241,0.2);">
+        <div class="sig-icon">🧮</div>
+        <h4>MSVS Score</h4>
+        <p>Weighted fusion of all 7 signals × Isolation Forest = final fraud_score</p>
+        <span class="difficulty diff-impossible" style="background:rgba(99,102,241,0.2);color:var(--accent-3);">COMPOSITE DEFENSE</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: UX Balance + Syndicate Detection -->
+  <div class="slide" data-duration="16000">
+    <div class="slide-tag">Fair UX + Syndicate Detection</div>
+    <div class="slide-title-sm">Innocent Until Proven Guilty.<br>Tiered Response — Not Binary Reject.</div>
+    <div class="tiers">
+      <div class="tier-card tier-green">
+        <div class="tier-icon">🟢</div>
+        <h3>Green</h3>
+        <div class="tier-score">Score &lt; 0.3</div>
+        <p><strong>Auto-approve.</strong> Payout in ≤ 2 hours. The honest majority.</p>
+      </div>
+      <div class="tier-card tier-amber">
+        <div class="tier-icon">🟡</div>
+        <h3>Amber</h3>
+        <div class="tier-score">Score 0.3 – 0.7</div>
+        <p><strong>Hold ≤ 4 hrs.</strong> Auto secondary checks. One tap to verify. No forms.</p>
+      </div>
+      <div class="tier-card tier-red">
+        <div class="tier-icon">🔴</div>
+        <h3>Red</h3>
+        <div class="tier-score">Score &gt; 0.7</div>
+        <p><strong>Manual review.</strong> 24hr SLA. One-tap appeal with 10% goodwill bonus if overturned.</p>
+      </div>
+    </div>
+    <div class="two-col" style="margin-top:24px; max-width:850px;">
+      <div class="col-card">
+        <h3>🕵️ Syndicate Detection</h3>
+        <ul>
+          <li>Registration clustering (>20 signups / 48hrs)</li>
+          <li>Device fingerprint overlap (IMEI, model, OS)</li>
+          <li>UPI payout graph analysis (50 workers → 5 UPIs)</li>
+          <li>Zone-level spike detection (Z-score > 3.0)</li>
+          <li>Adjacent zone comparison (400% spike vs. neighbors)</li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <h3>🏅 Trust Score System</h3>
+        <ul>
+          <li>New worker starts at 0.5 (neutral)</li>
+          <li>Each genuine claim: +0.05, appeal upheld: +0.10</li>
+          <li>Confirmed fraud: -0.15, spoofing app: -0.10</li>
+          <li>≥ 0.8 → "Trusted Rider" badge, auto-Green</li>
+          <li>Transparency: clear language explaining every flag</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: Tech + Roadmap + CTA -->
+  <div class="slide" data-duration="12000">
+    <div class="slide-tag">Tech Stack & Roadmap</div>
+    <div class="slide-title-sm">Built to Ship in 6 Weeks</div>
+    <div class="tech-pills">
+      <div class="tech-pill">⚛️ React / Next.js (PWA)</div>
+      <div class="tech-pill">🟢 Node.js + Express</div>
+      <div class="tech-pill">🐍 FastAPI (ML Serving)</div>
+      <div class="tech-pill">🐘 PostgreSQL</div>
+      <div class="tech-pill">🔴 Redis</div>
+      <div class="tech-pill">📨 Apache Kafka</div>
+      <div class="tech-pill">📊 XGBoost + Scikit-learn</div>
+      <div class="tech-pill">🧠 TensorFlow / LSTM</div>
+      <div class="tech-pill">📦 MLflow</div>
+      <div class="tech-pill">🐳 Docker</div>
+      <div class="tech-pill">☁️ AWS / GCP</div>
+      <div class="tech-pill">💳 Razorpay UPI</div>
+    </div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-week">Week 1</div>
+        <div class="tl-label">Ideation, README, Triggers, Video</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-week">Week 2</div>
+        <div class="tl-label">Backend APIs, DB Schema, Data Ingestion</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-week">Week 3</div>
+        <div class="tl-label">AI/ML Models v1, Premium Engine</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-week">Week 4</div>
+        <div class="tl-label">Frontend PWA, UPI Payments, Dashboards</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-week">Week 5</div>
+        <div class="tl-label">Trigger Engine, Fraud Pipeline, LSTM</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-week">Week 6</div>
+        <div class="tl-label">Testing, Polish, Demo, Presentation</div>
+      </div>
+    </div>
+    <div class="cta-tagline" style="margin-top: 32px; font-size: 22px; font-weight: 700;">
+      <span style="background:linear-gradient(135deg,var(--accent-1),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+        GigShield — Because every delivery partner deserves a safety net. 🛡️
+      </span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
+  document.getElementById('total-slides').textContent = totalSlides;
+
+  let currentIndex = 0;
+  let timer = null;
+  let paused = false;
+  let startTime = 0;
+  let remainingTime = 0;
+  let totalDuration = 0;
+  let elapsed = 0;
+  let progressInterval = null;
+
+  // Calculate total duration
+  slides.forEach(s => { totalDuration += parseInt(s.dataset.duration); });
+
+  function startPresentation() {
+    document.getElementById('start-overlay').classList.add('hidden');
+    showSlide(0);
+    startProgressTracking();
+  }
+
+  function showSlide(index) {
+    slides.forEach((s, i) => {
+      s.classList.remove('active', 'exit');
+      if (i < index) s.classList.add('exit');
+    });
+    slides[index].classList.add('active');
+    document.getElementById('current-slide').textContent = index + 1;
+
+    const duration = parseInt(slides[index].dataset.duration);
+    remainingTime = duration;
+    startTime = Date.now();
+
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      if (index < totalSlides - 1) {
+        currentIndex = index + 1;
+        showSlide(currentIndex);
+      }
+    }, duration);
+  }
+
+  function startProgressTracking() {
+    const bar = document.getElementById('progress-bar');
+    let elapsedBefore = 0;
+    for (let i = 0; i < currentIndex; i++) {
+      elapsedBefore += parseInt(slides[i].dataset.duration);
+    }
+
+    progressInterval = setInterval(() => {
+      if (paused) return;
+      let elapsedInCurrent = Date.now() - startTime;
+      let totalElapsed = elapsedBefore + elapsedInCurrent;
+
+      // Recalculate elapsedBefore based on currentIndex
+      elapsedBefore = 0;
+      for (let i = 0; i < currentIndex; i++) {
+        elapsedBefore += parseInt(slides[i].dataset.duration);
+      }
+      totalElapsed = elapsedBefore + (Date.now() - startTime);
+
+      const pct = Math.min((totalElapsed / totalDuration) * 100, 100);
+      bar.style.width = pct + '%';
+    }, 100);
+  }
+
+  // Pause / Resume on spacebar
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') {
+      e.preventDefault();
+      if (paused) {
+        // Resume
+        paused = false;
+        document.getElementById('pause-indicator').classList.remove('visible');
+        startTime = Date.now();
+        timer = setTimeout(() => {
+          if (currentIndex < totalSlides - 1) {
+            currentIndex++;
+            showSlide(currentIndex);
+          }
+        }, remainingTime);
+      } else {
+        // Pause
+        paused = true;
+        document.getElementById('pause-indicator').classList.add('visible');
+        clearTimeout(timer);
+        const elapsedInSlide = Date.now() - startTime;
+        remainingTime = Math.max(remainingTime - elapsedInSlide, 0);
+      }
+    }
+    // Arrow keys for manual navigation
+    if (e.code === 'ArrowRight' && currentIndex < totalSlides - 1) {
+      clearTimeout(timer);
+      currentIndex++;
+      showSlide(currentIndex);
+    }
+    if (e.code === 'ArrowLeft' && currentIndex > 0) {
+      clearTimeout(timer);
+      currentIndex--;
+      showSlide(currentIndex);
+    }
+  });
+</script>
+
+</body>
+</html>

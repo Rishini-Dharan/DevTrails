@@ -1,0 +1,10 @@
+node_modules/
+.env
+dev.db
+gigshield.db
+status.txt
+fetch.txt
+push.txt
+.DS_Store
+.next/
+*.log
