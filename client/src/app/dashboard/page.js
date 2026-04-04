@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { ShieldCheck, CloudLightning, History, ArrowUpRight, CloudRain, ThermometerSun, Wallet, TrendingUp, CreditCard, Wind, RefreshCw } from 'lucide-react';
-import axios from 'axios';
+import axios from '@/lib/axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import PayoutReceipt from '../components/PayoutReceipt';

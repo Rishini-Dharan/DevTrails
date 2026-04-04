@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { Activity, Users, ShieldAlert, CircleDollarSign, Fingerprint, RefreshCw, BarChart3, AlertTriangle, CreditCard } from 'lucide-react';
-import axios from 'axios';
+import axios from '@/lib/axios';
 import Link from 'next/link';
 
 export default function AdminDashboard() {

@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { ShieldAlert, CheckCircle, XCircle, Eye, ArrowLeft, RefreshCw, Fingerprint, MapPin, Clock } from 'lucide-react';
-import axios from 'axios';
+import axios from '@/lib/axios';
 import Link from 'next/link';
 
 export default function FraudInvestigation() {

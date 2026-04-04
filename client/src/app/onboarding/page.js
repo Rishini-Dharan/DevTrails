@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ShieldCheck, User, MapPin, Phone } from 'lucide-react';
-import axios from 'axios';
+import axios from '@/lib/axios';
 
 const STEPS = [
   { label: 'Phone', icon: Phone },

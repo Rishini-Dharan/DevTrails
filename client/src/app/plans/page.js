@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { CheckCircle2, Info, AlertTriangle, Shield } from 'lucide-react';
-import axios from 'axios';
+import axios from '@/lib/axios';
 
 export default function Plans() {
   const router = useRouter();

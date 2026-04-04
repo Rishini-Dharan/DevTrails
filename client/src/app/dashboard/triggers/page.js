@@ -1,7 +1,7 @@
 "use client";
 import { useState } from 'react';
 import { Play, Siren, CheckCircle, Cpu, CloudRain, ThermometerSun, Wind, AlertTriangle, Zap, CreditCard } from 'lucide-react';
-import axios from 'axios';
+import axios from '@/lib/axios';
 import Link from 'next/link';
 import PayoutReceipt from '../../components/PayoutReceipt';
 
