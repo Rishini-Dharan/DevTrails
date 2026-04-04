@@ -8,18 +8,19 @@ export const metadata = {
   title: 'GigShield — AI Powered Parametric Insurance',
   description: 'Weekly income protection for India\'s gig workers. AI-powered parametric micro-insurance with instant automated payouts.',
   manifest: '/manifest.json',
-  themeColor: '#6366f1',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
     title: 'GigShield',
   },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-  },
+};
+
+export const viewport = {
+  themeColor: '#6366f1',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({ children }) {
